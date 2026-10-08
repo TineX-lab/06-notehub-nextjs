@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createNote } from "@/lib/api";
 import type { CreateNoteDto } from "@/types/note";
+import css from './NoteForm.module.css';
 
 interface NoteFormProps {
   onCancel: () => void;
@@ -40,13 +41,13 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
         <div>
           <label htmlFor="title">Title</label>
           <Field id="title" type="text" name="title" style={{ width: '100%', padding: '8px' }} />
-          <ErrorMessage name="title" component="span" style={{ color: 'red', fontSize: '12px' }} />
+          <ErrorMessage name="title" component="span" className={css.error} />
         </div>
 
         <div>
           <label htmlFor="content">Content</label>
           <Field as="textarea" id="content" name="content" rows={4} style={{ width: '100%', padding: '8px' }} />
-          <ErrorMessage name="content" component="span" style={{ color: 'red', fontSize: '12px' }} />
+          <ErrorMessage name="content" component="span" className={css.error} />
         </div>
 
         <div>
@@ -58,7 +59,7 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          <ErrorMessage name="tag" component="span" style={{ color: 'red', fontSize: '12px' }} />
+          <ErrorMessage name="tag" component="span" className={css.error} />
         </div>
 
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
