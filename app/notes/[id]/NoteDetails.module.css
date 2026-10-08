@@ -1,0 +1,7 @@
+.main { padding-top: 24px; }
+.container { max-width: 720px; margin: 0 auto; }
+.item { background: #fff; padding: 20px; border-radius: 8px; }
+.header h2 { margin: 0 0 8px 0; }
+.tag { color: #64748b; }
+.content { margin-top: 12px; line-height: 1.6; }
+.date { margin-top: 16px; color: #94a3b8; font-size: 13px; }
