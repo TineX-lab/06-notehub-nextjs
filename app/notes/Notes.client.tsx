@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes, type FetchNotesResponse } from '@/lib/api';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import NoteList from '@/components/NoteList/NoteList';
@@ -24,9 +24,19 @@ function useDebounce<T>(value: T, delay: number = 400): T {
   return debouncedValue;
 }
 
-export default function NotesClient() {
-  const [query, setQuery] = useState('');
-  const [page, setPage] = useState(1);
+interface NotesClientProps {
+  initialData?: FetchNotesResponse;
+  currentPage?: number;
+  search?: string;
+}
+
+export default function NotesClient({
+  initialData,
+  currentPage = 1,
+  search = '',
+}: NotesClientProps = {}) {
+  const [query, setQuery] = useState(search);
+  const [page, setPage] = useState(currentPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const debouncedQuery = useDebounce(query, 400);
@@ -39,6 +49,7 @@ export default function NotesClient() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['notes', page, debouncedQuery],
     queryFn: () => fetchNotes(page, debouncedQuery),
+    initialData: page === currentPage && debouncedQuery === search ? initialData : undefined,
     placeholderData: keepPreviousData,
   });
 
