@@ -1,4 +1,6 @@
-import { useEffect, type ReactNode } from "react";
+'use client';
+
+import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import css from "./Modal.module.css";
 
@@ -8,7 +10,19 @@ interface ModalProps {
 }
 
 export default function Modal({ children, onClose }: ModalProps) {
+  const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null);
+
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setModalRoot(document.getElementById("modal-root") || document.body);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!modalRoot) return;
+
     document.body.style.overflow = "hidden";
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -20,7 +34,9 @@ export default function Modal({ children, onClose }: ModalProps) {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose]);
+  }, [onClose, modalRoot]);
+
+  if (!modalRoot) return null;
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.currentTarget === e.target) {
@@ -37,6 +53,6 @@ export default function Modal({ children, onClose }: ModalProps) {
     >
       <div className={css.modal}>{children}</div>
     </div>,
-    document.getElementById("modal-root") as HTMLElement,
+    modalRoot
   );
 }

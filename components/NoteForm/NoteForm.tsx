@@ -6,25 +6,25 @@ import type { CreateNoteDto } from "@/types/note";
 import css from './NoteForm.module.css';
 
 interface NoteFormProps {
-  onCancel: () => void;
+  onClose: () => void;
 }
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().min(3).max(50).required(),
-  content: Yup.string().max(500),
+  title: Yup.string().min(3).max(50).required('Title is required'),
+  content: Yup.string().max(500).required('Content is required'),
   tag: Yup.string()
     .oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"])
-    .required(),
+    .required('Tag is required'),
 });
 
-export default function NoteForm({ onCancel }: NoteFormProps) {
+export default function NoteForm({ onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
     mutationFn: (newNote: CreateNoteDto) => createNote(newNote),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-      onCancel();
+      onClose();
     },
   });
 
@@ -37,22 +37,22 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
         actions.setSubmitting(false);
       }}
     >
-      <Form style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <div>
+      <Form className={css.form}>
+        <div className={css.formGroup}>
           <label htmlFor="title">Title</label>
-          <Field id="title" type="text" name="title" style={{ width: '100%', padding: '8px' }} />
+          <Field id="title" type="text" name="title" className={css.input} />
           <ErrorMessage name="title" component="span" className={css.error} />
         </div>
 
-        <div>
+        <div className={css.formGroup}>
           <label htmlFor="content">Content</label>
-          <Field as="textarea" id="content" name="content" rows={4} style={{ width: '100%', padding: '8px' }} />
+          <Field as="textarea" id="content" name="content" rows={4} className={css.textarea} />
           <ErrorMessage name="content" component="span" className={css.error} />
         </div>
 
-        <div>
+        <div className={css.formGroup}>
           <label htmlFor="tag">Tag</label>
-          <Field as="select" id="tag" name="tag" style={{ width: '100%', padding: '8px' }}>
+          <Field as="select" id="tag" name="tag" className={css.select}>
             <option value="Todo">Todo</option>
             <option value="Work">Work</option>
             <option value="Personal">Personal</option>
@@ -62,10 +62,16 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
           <ErrorMessage name="tag" component="span" className={css.error} />
         </div>
 
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-          <button type="button" onClick={onCancel} style={{ padding: '8px 16px' }}>Cancel</button>
-          <button type="submit" disabled={createMutation.isPending} style={{ padding: '8px 16px', background: '#2563eb', color: 'white', border: 'none' }}>
-            Create note
+        <div className={css.actions}>
+          <button type="button" onClick={onClose} className={css.cancelButton}>
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={createMutation.isPending}
+            className={css.submitButton}
+          >
+            {createMutation.isPending ? 'Creating...' : 'Create note'}
           </button>
         </div>
       </Form>

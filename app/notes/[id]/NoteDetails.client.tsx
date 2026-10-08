@@ -12,26 +12,18 @@ export default function NoteDetailsClient() {
   const { data: note, isLoading, isError } = useQuery({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
-    enabled: !!id,
+    refetchOnMount: false,
   });
 
-  if (isLoading) return <p>Loading, please wait...</p>;
-  if (isError || !note) return <p>Something went wrong.</p>;
+  if (isLoading) return <p>Loading note details...</p>;
+  if (isError || !note) return <p>Error loading note details.</p>;
 
   return (
-    <main className={css.main}>
-      <div className={css.container}>
-        <div className={css.item}>
-          <div className={css.header}>
-            <h2>{note.title}</h2>
-          </div>
-          <p className={css.tag}>{note.tag}</p>
-          <p className={css.content}>{note.content}</p>
-          <p className={css.date}>
-            {note.createdAt ? new Date(note.createdAt).toLocaleString() : ''}
-          </p>
-        </div>
-      </div>
-    </main>
+    <div className={css.container}>
+      <span className={css.tag}>{note.tag}</span>
+      <h1 className={css.title}>{note.title}</h1>
+      <p className={css.content}>{note.content}</p>
+      <p className={css.date}>Created: {new Date(note.createdAt).toLocaleDateString()}</p>
+    </div>
   );
 }
